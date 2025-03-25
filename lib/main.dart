@@ -1,3 +1,6 @@
+import 'package:finance_tracker/screens/Settings_Screen/app_settings_screen.dart';
+import 'package:finance_tracker/screens/Settings_Screen/help_support_screen.dart';
+import 'package:finance_tracker/screens/Settings_Screen/privacy_settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,6 +32,9 @@ class MyApp extends StatelessWidget {
         "/login": (context) => LoginScreen(),
         "/dashboard": (context) => DashboardScreen(),
         "/changePassword": (context) => ChangePasswordScreen(),
+        "/privacySettings": (context) => PrivacySettingsScreen(),
+        "/appSettings": (context) => AppSettingsScreen(),
+        "/helpSupport": (context) => HelpSupportScreen(),
       },
     );
   }

@@ -159,7 +159,6 @@ class _DraggableFABState extends State<DraggableFAB> {
     for (var line in lines) {
       if (line.contains(RegExp(r'[A-Za-z]')) &&
           line.contains(RegExp(r'[\$₹€]'))) {
-        // Remove amount to isolate name
         return line
             .replaceAll(RegExp(r'[\$₹€]?\s?\d+(\.\d{1,2})?'), '')
             .replaceAll(RegExp(r'[:\-]'), '')
