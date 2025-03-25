@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:finance_tracker/screens/auth/login_screen.dart';
@@ -7,6 +8,9 @@ import 'package:finance_tracker/screens/profile/change_password_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Disable mouse gesture tracking issue
+  GestureBinding.instance.resamplingEnabled = true;
+
   await Firebase.initializeApp();
   runApp(MyApp());
 }
