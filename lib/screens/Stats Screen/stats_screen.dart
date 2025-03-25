@@ -35,18 +35,39 @@ class StatsScreen extends StatelessWidget {
 
                   var transactions = snapshot.data!.docs;
                   var groupedData = _groupTransactionsByDay(transactions);
+                  var sortedDays = groupedData.keys.toList()..sort();
+
+                  if (sortedDays.isEmpty) {
+                    return const Center(child: Text("No transaction data."));
+                  }
 
                   double maxTransactionAmount = _getMaxYValue(groupedData);
 
-                  return BarChart(
-                    BarChartData(
-                      alignment: BarChartAlignment.spaceAround,
-                      maxY: maxTransactionAmount + 500,
-                      barGroups: _getBarGroups(groupedData),
-                      titlesData: _getTitles(),
-                      borderData: FlBorderData(show: false),
-                      gridData: FlGridData(show: false),
-                    ),
+                  final dateRangeText = _getDateRangeText(sortedDays);
+
+                  return Column(
+                    children: [
+                      Text(
+                        dateRangeText,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Expanded(
+                        child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: maxTransactionAmount + 500,
+                            barGroups: _getBarGroups(groupedData, sortedDays),
+                            titlesData: _getTitles(sortedDays),
+                            borderData: FlBorderData(show: false),
+                            gridData: FlGridData(show: false),
+                          ),
+                        ),
+                      ),
+                    ],
                   );
                 },
               ),
@@ -57,7 +78,6 @@ class StatsScreen extends StatelessWidget {
     );
   }
 
-  /// Group transactions by day and category
   Map<int, Map<String, double>> _groupTransactionsByDay(
     List<QueryDocumentSnapshot> transactions,
   ) {
@@ -66,7 +86,6 @@ class StatsScreen extends StatelessWidget {
     for (var transaction in transactions) {
       var data = transaction.data() as Map<String, dynamic>;
 
-      // Firestore Timestamp to DateTime
       DateTime date =
           (data['date'] is Timestamp)
               ? (data['date'] as Timestamp).toDate()
@@ -87,23 +106,20 @@ class StatsScreen extends StatelessWidget {
     return groupedData;
   }
 
-  // Dynamically Calculate Max Y-Axis Value
   double _getMaxYValue(Map<int, Map<String, double>> groupedData) {
     double maxValue = 0;
-
     for (var dayData in groupedData.values) {
-      double dayTotal = dayData.values.fold(0, (sum, value) => sum + value);
-      if (dayTotal > maxValue) {
-        maxValue = dayTotal;
+      double total = dayData.values.fold(0, (sum, val) => sum + val);
+      if (total > maxValue) {
+        maxValue = total;
       }
     }
-
     return maxValue;
   }
 
-  // Bar Chart Data Stacked Categories
   List<BarChartGroupData> _getBarGroups(
     Map<int, Map<String, double>> groupedData,
+    List<int> sortedDays,
   ) {
     List<Color> colors = [
       Colors.orange,
@@ -112,20 +128,20 @@ class StatsScreen extends StatelessWidget {
       Colors.blueGrey,
     ];
 
-    return List.generate(8, (index) {
-      Map<String, double> dayData = groupedData[index + 1] ?? {};
-
+    return List.generate(sortedDays.length, (index) {
+      int day = sortedDays[index];
+      final dayData = groupedData[day]!;
       double previousHeight = 0;
 
       return BarChartGroupData(
         x: index,
-        barRods: List.generate(dayData.keys.length, (i) {
-          double currentHeight = dayData.values.elementAt(i);
-          double startHeight = previousHeight;
-          previousHeight += currentHeight;
+        barRods: List.generate(dayData.length, (i) {
+          double current = dayData.values.elementAt(i);
+          double start = previousHeight;
+          previousHeight += current;
 
           return BarChartRodData(
-            fromY: startHeight,
+            fromY: start,
             toY: previousHeight,
             color: colors[i % colors.length],
             width: 12,
@@ -135,37 +151,68 @@ class StatsScreen extends StatelessWidget {
     });
   }
 
-  //Configure X & Y Axis Labels
-  FlTitlesData _getTitles() {
+  FlTitlesData _getTitles(List<int> sortedDays) {
     return FlTitlesData(
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 40,
-          getTitlesWidget: (value, meta) {
+          getTitlesWidget: (value, _) {
             if (value % 1000 == 0) {
               return Text(
                 "\$ ${(value / 1000).toInt()}K",
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               );
             }
-            return Container();
+            return const SizedBox.shrink();
           },
         ),
       ),
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
-          getTitlesWidget: (value, meta) {
-            return Text(
-              "0${value.toInt() + 1}",
-              style: const TextStyle(color: Colors.grey, fontSize: 12),
-            );
+          getTitlesWidget: (value, _) {
+            int index = value.toInt();
+            if (index >= 0 && index < sortedDays.length) {
+              final now = DateTime.now();
+              final date = DateTime(now.year, now.month, sortedDays[index]);
+              return Text(
+                "${_getMonthAbbreviation(date.month)} ${date.day}",
+                style: const TextStyle(color: Colors.grey, fontSize: 11),
+              );
+            }
+            return const SizedBox.shrink();
           },
         ),
       ),
       rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
       topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
     );
+  }
+
+  String _getDateRangeText(List<int> sortedDays) {
+    final now = DateTime.now();
+    final start = DateTime(now.year, now.month, sortedDays.first);
+    final end = DateTime(now.year, now.month, sortedDays.last);
+
+    return "Transactions from ${_getMonthAbbreviation(start.month)} ${start.day} to ${_getMonthAbbreviation(end.month)} ${end.day}";
+  }
+
+  String _getMonthAbbreviation(int month) {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return months[month - 1];
   }
 }
