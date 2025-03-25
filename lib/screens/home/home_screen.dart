@@ -118,8 +118,9 @@ class HomeScreen extends StatelessWidget {
                       var transaction = transactions[index];
                       String category =
                           (transaction.data()
-                              as Map<String, dynamic>?)?['category'] ??
+                              as Map<String, dynamic>?)?['name'] ??
                           'Other';
+
                       double amount = transaction['amount'] ?? 0;
                       String date = transaction['date'] ?? "No Date";
 
