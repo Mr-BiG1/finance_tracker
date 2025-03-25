@@ -153,8 +153,28 @@ class _DraggableFABState extends State<DraggableFAB> {
   }
 
   String? _extractCategory(String text) {
-    final match = RegExp(r'^([A-Za-z ]+)[\:\-]').firstMatch(text);
-    return match?.group(1)?.trim();
+    final lines = text.split('\n').map((l) => l.trim()).toList();
+
+    // Prioritize lines that contain both a word and a price indicator
+    for (var line in lines) {
+      if (line.contains(RegExp(r'[A-Za-z]')) &&
+          line.contains(RegExp(r'[\$₹€]'))) {
+        // Remove amount to isolate name
+        return line
+            .replaceAll(RegExp(r'[\$₹€]?\s?\d+(\.\d{1,2})?'), '')
+            .replaceAll(RegExp(r'[:\-]'), '')
+            .trim();
+      }
+    }
+
+    // Fallback to any line with at least one letter
+    for (var line in lines) {
+      if (line.contains(RegExp(r'[A-Za-z]'))) {
+        return line.replaceAll(RegExp(r'[:\-]'), '').trim();
+      }
+    }
+
+    return "Scanned Bill";
   }
 
   void _showSnack(String message) {
