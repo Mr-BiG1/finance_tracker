@@ -1,3 +1,4 @@
+import 'package:finance_tracker/screens/Chat/chat_Screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/app_settings_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/help_support_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/privacy_settings_screen.dart';
@@ -15,6 +16,7 @@ void main() async {
   GestureBinding.instance.resamplingEnabled = true;
 
   await Firebase.initializeApp();
+
   runApp(MyApp());
 }
 
@@ -35,6 +37,7 @@ class MyApp extends StatelessWidget {
         "/privacySettings": (context) => PrivacySettingsScreen(),
         "/appSettings": (context) => AppSettingsScreen(),
         "/helpSupport": (context) => HelpSupportScreen(),
+        "/chat": (context) => ChatScreen(),
       },
     );
   }

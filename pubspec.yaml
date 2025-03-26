@@ -45,6 +45,7 @@ dependencies:
   fl_chart: ^0.70.2
   google_mlkit_text_recognition: ^0.15.0
   url_launcher: ^6.3.1
+  crisp_chat: ^2.2.4
 
 dev_dependencies:
   flutter_test:

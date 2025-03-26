@@ -81,6 +81,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.19.1"
+  crisp_chat:
+    dependency: "direct main"
+    description:
+      name: crisp_chat
+      sha256: "2e13b953e889095f3d8607567f85331364006598b2280cd38bbbf8e23a354907"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.2.4"
   cross_file:
     dependency: transitive
     description:
