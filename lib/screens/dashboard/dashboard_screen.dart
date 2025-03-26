@@ -4,7 +4,7 @@ import 'package:finance_tracker/screens/Stats%20Screen/stats_screen.dart';
 import 'package:finance_tracker/screens/profile/profile_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/settings_screen.dart';
 import 'package:finance_tracker/screens/payment/payment_screen.dart';
-import 'package:finance_tracker/widgets/draggable_fab.dart'; // NEW
+import 'package:finance_tracker/widgets/draggable_fab.dart';
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -32,7 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: Stack(
         children: [
           IndexedStack(index: _selectedIndex, children: _screens),
-          const DraggableFAB(initialPosition: Offset(300, 600)), // NEW
+          const DraggableFAB(initialPosition: Offset(300, 600)),
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
