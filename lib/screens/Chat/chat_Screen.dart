@@ -16,7 +16,6 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-
     final currentUser = FirebaseAuth.instance.currentUser;
     final email = currentUser?.email ?? 'guest@example.com';
     final displayName = currentUser?.displayName ?? 'Guest User';
