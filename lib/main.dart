@@ -2,6 +2,9 @@ import 'package:finance_tracker/screens/Chat/chat_Screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/app_settings_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/help_support_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/privacy_settings_screen.dart';
+import 'package:finance_tracker/screens/tax/tax_calculator_screen.dart';
+import 'package:finance_tracker/screens/tax/tax_summary_screen.dart';
+import 'package:finance_tracker/screens/tax/tax_upload_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,6 +41,9 @@ class MyApp extends StatelessWidget {
         "/appSettings": (context) => AppSettingsScreen(),
         "/helpSupport": (context) => HelpSupportScreen(),
         "/chat": (context) => ChatScreen(),
+        "/taxUpload": (context) => TaxUploadScreen(),
+        "/taxCalculator": (context) => TaxCalculatorScreen(),
+        "/taxSummary": (context) => TaxSummaryScreen(),
       },
     );
   }
