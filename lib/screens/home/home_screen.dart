@@ -28,6 +28,16 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _refreshIndicatorKey.currentState?.show();
     });
+    _reloadUser();
+  }
+
+  Future<void> _reloadUser() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await user.reload();
+      // Triggers widget rebuild to reflect new name
+      setState(() {});
+    }
   }
 
   Future<void> _refreshData() async {
@@ -61,41 +71,56 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
+    final user = _auth.currentUser;
+
+    return FutureBuilder<DocumentSnapshot>(
+      future:
+          FirebaseFirestore.instance.collection('users').doc(user?.uid).get(),
+      builder: (context, snapshot) {
+        String name = "User";
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          name = "Loading...";
+        } else if (snapshot.hasData && snapshot.data!.exists) {
+          name = snapshot.data!.get('name') ?? "User";
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            CircleAvatar(
-              radius: 24,
-              backgroundColor: Colors.amber[100],
-              child: Icon(Icons.person, color: Colors.amber[800], size: 30),
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
               children: [
-                Text("Welcome", style: HomeScreenTheme.welcomeText),
-                Text(
-                  _auth.currentUser?.displayName ?? "User",
-                  style: HomeScreenTheme.userNameText,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: Colors.amber[100],
+                  child: Icon(Icons.person, color: Colors.amber[800], size: 30),
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Welcome", style: HomeScreenTheme.welcomeText),
+                    Text(
+                      name,
+                      style: HomeScreenTheme.userNameText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ],
             ),
+            IconButton(
+              icon: const Icon(Icons.settings, size: 26),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                );
+              },
+            ),
           ],
-        ),
-        IconButton(
-          icon: const Icon(Icons.settings, size: 26),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            );
-          },
-        ),
-      ],
+        );
+      },
     );
   }
 
