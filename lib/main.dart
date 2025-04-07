@@ -2,6 +2,7 @@ import 'package:finance_tracker/screens/Chat/chat_Screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/app_settings_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/help_support_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/privacy_settings_screen.dart';
+import 'package:finance_tracker/screens/auth/signup_screen.dart';
 import 'package:finance_tracker/screens/tax/InvoiceScreen/invoice_screen.dart';
 import 'package:finance_tracker/screens/tax/tax_calculator_screen.dart';
 import 'package:finance_tracker/screens/tax/tax_dashboard_screen.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       home: AuthWrapper(),
       routes: {
         AppRoutes.login: (context) => LoginScreen(),
+        AppRoutes.signUp: (context) => SignUpScreen(),
         AppRoutes.dashboard: (context) {
           final args = ModalRoute.of(context)?.settings.arguments;
           final int initialTab = args is int ? args : 0;
@@ -52,7 +54,6 @@ class MyApp extends StatelessWidget {
         AppRoutes.tax: (context) => const TaxDashboardScreen(),
         AppRoutes.taxNotifications: (context) => TaxNotificationsScreen(),
         AppRoutes.invoice: (context) => InvoiceScreen(),
-        AppRoutes.login: (context) => LoginScreen(),
       },
     );
   }
