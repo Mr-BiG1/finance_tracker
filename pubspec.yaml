@@ -48,6 +48,7 @@ dependencies:
   crisp_chat: ^2.2.4
   firebase_storage: ^12.4.5
   pdf: ^3.11.3
+  printing: ^5.14.2
 
 dev_dependencies:
   flutter_test:
