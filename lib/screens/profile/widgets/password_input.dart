@@ -1,36 +1,36 @@
 import 'package:flutter/material.dart';
 
-class PasswordInput extends StatefulWidget {
+class PasswordInput extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
+  final String? labelText;
+  final bool obscureText;
+  final Widget? suffixIcon;
+  final FormFieldValidator<String>? validator;
 
   const PasswordInput({
+    Key? key,
     required this.controller,
     required this.hintText,
-    Key? key,
+    this.labelText,
+    this.obscureText = true,
+    this.suffixIcon,
+    this.validator,
   }) : super(key: key);
 
   @override
-  _PasswordInputState createState() => _PasswordInputState();
-}
-
-class _PasswordInputState extends State<PasswordInput> {
-  bool _isObscured = true;
-
-  @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: widget.controller,
-      obscureText: _isObscured,
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      validator: validator,
       decoration: InputDecoration(
-        hintText: widget.hintText,
+        hintText: hintText,
+        labelText: labelText,
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         filled: true,
-        fillColor: Colors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        suffixIcon: IconButton(
-          icon: Icon(_isObscured ? Icons.visibility : Icons.visibility_off),
-          onPressed: () => setState(() => _isObscured = !_isObscured),
-        ),
+        fillColor: Colors.white.withOpacity(0.9),
       ),
     );
   }

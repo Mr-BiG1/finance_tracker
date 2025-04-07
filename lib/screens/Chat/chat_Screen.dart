@@ -9,13 +9,13 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  // add Crisp Website ID
   final String websiteID = "603a1fb9-9974-4b58-89b4-63ee1d0ab9ed";
   late CrispConfig config;
 
   @override
   void initState() {
     super.initState();
+
     final currentUser = FirebaseAuth.instance.currentUser;
     final email = currentUser?.email ?? 'guest@example.com';
     final displayName = currentUser?.displayName ?? 'Guest User';

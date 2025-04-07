@@ -51,4 +51,19 @@ class HomeScreenTheme {
     fontWeight: FontWeight.bold,
     color: amount >= 0 ? Colors.green : Colors.red,
   );
+
+  static const TextStyle sectionHeaderText = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const TextStyle viewAllText = TextStyle(
+    fontSize: 14,
+    color: Colors.blue,
+  );
+
+  static const TextStyle emptyStateText = TextStyle(
+    fontSize: 16,
+    color: Colors.grey,
+  );
 }

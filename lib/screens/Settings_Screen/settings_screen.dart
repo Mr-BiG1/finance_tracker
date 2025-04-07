@@ -48,10 +48,12 @@ class SettingsScreen extends StatelessWidget {
                   icon: Icons.person,
                   title: "Profile",
                   onTap: () {
-                    Navigator.push(
+                    Navigator.pushNamed(
                       context,
-                      MaterialPageRoute(builder: (context) => ProfileScreen()),
-                    );
+                      '/dashboard',
+                      arguments: 3,
+                    ); // 3 = index of Profile tab
+                    ;
                   },
                 ),
                 _buildSettingsOption(

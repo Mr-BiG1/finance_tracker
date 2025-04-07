@@ -5,60 +5,117 @@ import 'package:finance_tracker/screens/payment/widgets/add_card_modal.dart';
 import 'package:finance_tracker/screens/payment/widgets/pay_now_button.dart';
 import 'package:finance_tracker/screens/payment/widgets/no_saved_cards.dart';
 import 'package:finance_tracker/screens/payment/widgets/add_card_button.dart';
-// screen for the payment screen
+import 'package:finance_tracker/utils/constants.dart';
+
 class PaymentScreen extends StatefulWidget {
+  const PaymentScreen({Key? key}) : super(key: key);
+
   @override
-  _PaymentScreenState createState() => _PaymentScreenState();
+  State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
   final PaymentService _paymentService = PaymentService();
-  String? selectedMethod;
+  String? _selectedMethod;
+  bool _isProcessingPayment = false;
 
-  // Simulates a payment process
-  void _processPayment() {
-    if (selectedMethod == null) return;
+  Future<void> _processPayment() async {
+    if (_selectedMethod == null) {
+      _showSnackBar('Please select a payment method');
+      return;
+    }
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text(" Payment Successful!")));
+    setState(() => _isProcessingPayment = true);
+
+    try {
+      // Simulate payment processing delay
+      await Future.delayed(const Duration(seconds: 2));
+
+      // In a real app, you would call your payment service here
+      // await _paymentService.processPayment(_selectedMethod!);
+
+      _showSuccessDialog();
+    } catch (e) {
+      _showSnackBar('Payment failed: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessingPayment = false);
+      }
+    }
   }
 
-  // Show Add Card Dialog
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text('Payment Successful'),
+            content: const Text(
+              'Your transaction has been completed successfully.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+    );
+  }
+
   void _showAddCardDialog() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder:
-          (context) => SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
-              ),
-              child: AddCardModal(paymentService: _paymentService),
-            ),
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppColors.darkGrey,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: AddCardModal(paymentService: _paymentService),
+          ),
+        );
+      },
+    ).then((_) {
+      // Refresh cards list after adding a new card
+      setState(() {});
+    });
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Background: Dark Gradient
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.black,
       appBar: AppBar(
         title: const Text(
-          "Payment Method",
-          style: TextStyle(color: Colors.white),
+          "Payment Methods",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
+        centerTitle: true,
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF1E1E1E), Color(0xFF292929)],
+            colors: [AppColors.darkGrey, AppColors.darkGrey],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -68,58 +125,83 @@ class _PaymentScreenState extends State<PaymentScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 16),
+              const Text(
+                'Select Payment Method',
+                style: TextStyle(color: Colors.white70, fontSize: 16),
+              ),
+              const SizedBox(height: 16),
               Expanded(
                 child: StreamBuilder(
                   stream: _paymentService.getStoredCards(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      );
                     }
 
-                    var cards = snapshot.data!.docs;
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          'Error loading cards: ${snapshot.error}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      );
+                    }
+
+                    final cards = snapshot.data?.docs ?? [];
                     if (cards.isEmpty) {
                       return NoSavedCardsWidget(onAddCard: _showAddCardDialog);
                     }
 
-                    return ListView.builder(
-                      itemCount: cards.length,
-                      itemBuilder: (context, index) {
-                        var card = cards[index];
-
-                        return StoredCardItem(
-                          card: card,
-                          paymentService: _paymentService,
-                          isSelected: selectedMethod == card.id,
-                          onSelect: () {
-                            setState(() {
-                              selectedMethod = card.id;
-                            });
-                          },
-                        );
-                      },
+                    return RefreshIndicator(
+                      color: AppColors.primary,
+                      onRefresh: () async => setState(() {}),
+                      child: ListView.separated(
+                        itemCount: cards.length,
+                        separatorBuilder:
+                            (_, __) =>
+                                const Divider(color: Colors.white24, height: 1),
+                        itemBuilder: (context, index) {
+                          final card = cards[index];
+                          return StoredCardItem(
+                            card: card,
+                            paymentService: _paymentService,
+                            isSelected: _selectedMethod == card.id,
+                            onSelect:
+                                () => setState(() => _selectedMethod = card.id),
+                            onDelete:
+                                () => setState(() {
+                                  if (_selectedMethod == card.id) {
+                                    _selectedMethod = null;
+                                  }
+                                }),
+                          );
+                        },
+                      ),
                     );
                   },
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Buttons
               AddCardButton(onPressed: _showAddCardDialog),
-              const SizedBox(height: 10),
+              const SizedBox(height: 12),
               PayNowButton(
-                selectedMethod: selectedMethod,
+                selectedMethod: _selectedMethod,
                 onPay: _processPayment,
+                isLoading: _isProcessingPayment,
               ),
               const SizedBox(height: 30),
             ],
           ),
         ),
       ),
-
-      // Floating Action Button
       floatingActionButton: FloatingActionButton(
         heroTag: "add_card_fab",
-        backgroundColor: Colors.purpleAccent,
+        backgroundColor: AppColors.primary,
         onPressed: _showAddCardDialog,
         child: const Icon(Icons.add, size: 30),
       ),

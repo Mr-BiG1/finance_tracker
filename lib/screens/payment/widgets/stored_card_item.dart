@@ -7,6 +7,7 @@ class StoredCardItem extends StatelessWidget {
   final PaymentService paymentService;
   final bool isSelected;
   final VoidCallback onSelect;
+  final VoidCallback? onDelete;
 
   const StoredCardItem({
     Key? key,
@@ -14,6 +15,7 @@ class StoredCardItem extends StatelessWidget {
     required this.paymentService,
     required this.isSelected,
     required this.onSelect,
+    this.onDelete,
   }) : super(key: key);
 
   @override
@@ -54,7 +56,7 @@ class StoredCardItem extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            //Card Details
+            // Card Details
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,16 +76,17 @@ class StoredCardItem extends StatelessWidget {
               ],
             ),
 
-            //Card Type Icon + Delete Button
+            // Card Type Icon + Delete Button
             Row(
               children: [
                 _getCardIcon(data['type']),
                 const SizedBox(width: 8),
                 IconButton(
                   icon: const Icon(Icons.delete, color: Colors.redAccent),
-                  onPressed: () {
+                  onPressed: () async {
                     print("🗑️ Deleting Card: ${data['cardNumber']}");
-                    paymentService.deleteCard(card.id);
+                    await paymentService.deleteCard(card.id);
+                    if (onDelete != null) onDelete!(); // <-- trigger callback
                   },
                 ),
               ],
@@ -94,7 +97,6 @@ class StoredCardItem extends StatelessWidget {
     );
   }
 
-  //Returns the correct card network icon
   Widget _getCardIcon(String type) {
     String iconPath = "assets/icons/${type.toLowerCase()}.png";
     return Image.asset(
