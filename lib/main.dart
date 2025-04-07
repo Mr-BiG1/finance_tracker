@@ -3,6 +3,7 @@ import 'package:finance_tracker/screens/Settings_Screen/app_settings_screen.dart
 import 'package:finance_tracker/screens/Settings_Screen/help_support_screen.dart';
 import 'package:finance_tracker/screens/Settings_Screen/privacy_settings_screen.dart';
 import 'package:finance_tracker/screens/tax/tax_calculator_screen.dart';
+import 'package:finance_tracker/screens/tax/tax_notifications_screen.dart';
 import 'package:finance_tracker/screens/tax/tax_summary_screen.dart';
 import 'package:finance_tracker/screens/tax/tax_upload_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:finance_tracker/screens/auth/login_screen.dart';
 import 'package:finance_tracker/screens/dashboard/dashboard_screen.dart';
 import 'package:finance_tracker/screens/profile/change_password_screen.dart';
+import 'package:finance_tracker/screens/tax/tax_dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +46,8 @@ class MyApp extends StatelessWidget {
         "/taxUpload": (context) => TaxUploadScreen(),
         "/taxCalculator": (context) => TaxCalculatorScreen(),
         "/taxSummary": (context) => TaxSummaryScreen(),
+        '/tax': (context) => const TaxDashboardScreen(),
+        "/taxNotifications": (context) => TaxNotificationsScreen(),
       },
     );
   }

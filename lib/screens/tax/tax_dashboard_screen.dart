@@ -1,8 +1,8 @@
 // lib/screens/tax/tax_dashboard_screen.dart
+import 'package:finance_tracker/screens/tax/tax_notifications_screen.dart';
+import 'package:finance_tracker/screens/tax/tax_upload_screen.dart';
 import 'package:flutter/material.dart';
-import 'upload_tax_docs_screen.dart';
 import 'tax_calculator_screen.dart';
-import 'tax_notifications_screen.dart';
 
 class TaxDashboardScreen extends StatelessWidget {
   const TaxDashboardScreen({super.key});
@@ -22,7 +22,7 @@ class TaxDashboardScreen extends StatelessWidget {
               onTap:
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => UploadTaxDocsScreen()),
+                    MaterialPageRoute(builder: (_) => TaxUploadScreen()),
                   ),
             ),
             const SizedBox(height: 16),
