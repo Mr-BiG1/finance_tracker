@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.tax: (context) => const TaxDashboardScreen(),
         AppRoutes.taxNotifications: (context) => TaxNotificationsScreen(),
         AppRoutes.invoice: (context) => InvoiceScreen(),
+        AppRoutes.login: (context) => LoginScreen(),
       },
     );
   }
