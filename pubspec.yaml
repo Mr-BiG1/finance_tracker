@@ -49,6 +49,7 @@ dependencies:
   firebase_storage: ^12.4.5
   pdf: ^3.11.3
   printing: ^5.14.2
+  audioplayers: ^6.4.0
 
 dev_dependencies:
   flutter_test:
@@ -77,6 +78,8 @@ flutter:
     - assets/payment_failed.png
     - assets/profile_placeholder.png
     - assets/icons/visa.png
+    - assets/sounds/success.mp3
+    - assets/sounds/fail.mp3
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
