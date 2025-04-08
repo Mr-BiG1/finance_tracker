@@ -1,6 +1,6 @@
 # **TGA Tax Tracker 📊💰**
 
-Finance Tracker is a **secure and user-friendly** personal finance management app. It helps users track expenses, manage payments, and maintain financial health with ease. The app is built using **Flutter** and **Firebase**, ensuring real-time data synchronization and a smooth user experience.
+TGA Tax Tracker  is a **secure and user-friendly** personal finance management app. It helps users track expenses, manage payments, and maintain financial health with ease. The app is built using **Flutter** and **Firebase**, ensuring real-time data synchronization and a smooth user experience.
 
 ---
 
